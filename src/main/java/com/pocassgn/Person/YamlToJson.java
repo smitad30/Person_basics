@@ -24,6 +24,7 @@ public  void convertYamlToJson() {
             Object obj = yamlReader.readValue(content, Object.class);
             ObjectMapper jsonWriter = new ObjectMapper();
             String json= jsonWriter.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
+	    System.out.println("Yaml converted to JSON");
             System.out.println(json);
         } catch (IOException ex) {
             ex.printStackTrace();
