@@ -1,0 +1,50 @@
+ https://facingissuesonit.com/2018/06/03/java-how-to-convert-yaml-to-json/
+ 
+ 
+ {
+  "parameters" : [ {
+    "name" : "mavenPOMFile",
+    "type" : "string",
+    "default" : "pom.xml"
+  }, {
+    "name" : "repository",
+    "type" : "string"
+  } ],
+  "jobs" : [ {
+    "job" : "JavaMavenJob",
+    "displayName" : "Job to Build Java Maven project",
+    "variables" : {
+      "vmImage" : "Default"
+    },
+    "pool" : {
+      "name" : "$(vmImage)"
+    },
+    "steps" : [ {
+      "checkout" : "${{Parameters.repository}}"
+    }, {
+      "task" : "Maven@3",
+      "displayName" : "Maven ${{Parameters.mavenPOMFile}}",
+      "inputs" : {
+        "mavenPomFile" : "${{Parameters.mavenPOMFile}}",
+        "goals" : "package -Dmaven.test.skip=true",
+        "options" : "-Dappliancetype=boot -P!thin"
+      }
+    }, {
+      "task" : "CopyFiles@2",
+      "displayName" : "Copy Files to: $(build.artifactstagingdirectory)",
+      "inputs" : {
+        "SourceFolder" : "$(system.defaultworkingdirectory)",
+        "Contents" : "**/*.jar",
+        "TargetFolder" : "$(build.artifactstagingdirectory)",
+        "condition" : "succeededOrFailed()"
+      }
+    }, {
+      "task" : "PublishBuildArtifacts@1",
+      "displayName" : "Publish Artifact: drop",
+      "inputs" : {
+        "PathtoPublish" : "$(build.artifactstagingdirectory)",
+        "condition" : "succeededOrFailed()"
+      }
+    } ]
+  } ]
+}
