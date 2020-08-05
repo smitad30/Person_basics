@@ -35,10 +35,12 @@ public class PersonController {
 	@PostMapping("/person")
 	public String validateSchema(@RequestBody Map<String,Object> userip) 
 	{
+		System.out.println("First change for clones");
 		try {
 			if(ps.valiadteSchema(userip))
 			{
 				System.out.println("Valid");
+				
 				return "Correct data";
 			}
 			else
